@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>McCup · A break from finals at McGill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #ED1B2F;
+    --red-deep: #C8102E;
+    --cream: #F2ECDC;
+    --paper: #FAF6EA;
+    --ink: #1F1B18;
+    --ink-soft: #57504A;
+    --mustard: #E8A23B;
+    --blush: #F6C6CB;
+    --shadow: 5px 7px 5px rgba(31, 27, 24, .55);
+    --sans: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "Courier Prime", "Courier New", Courier, monospace;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1.125rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--mustard); outline-offset: 3px; }
+
+  .wrap { width: min(1180px, 100% - 3rem); margin-inline: auto; }
+
+  /* Shared pieces from the slides */
+  .mono {
+    font-family: var(--mono);
+    font-size: .8rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+  }
+  .tape {
+    display: inline-block;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: .85rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding: .45rem .9rem;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    transform: rotate(-2deg);
+  }
+  .tape.mustard { background: var(--mustard); }
+  .tape.red { background: var(--red); color: var(--paper); }
+  .paper {
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    padding: 1.6rem 1.8rem;
+  }
+  .display {
+    font-weight: 900;
+    letter-spacing: -.035em;
+    line-height: .92;
+    margin: 0;
+  }
+  h2.display { font-size: clamp(2.6rem, 6.5vw, 5rem); transform: rotate(-1.2deg); transform-origin: left; }
+
+  /* Top bar */
+  .topbar {
+    background: var(--red);
+    color: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 0; gap: 1rem;
+  }
+  .logo { font-weight: 900; font-size: 1.5rem; letter-spacing: -.04em; text-decoration: none; }
+  .topbar nav { display: flex; gap: 1.6rem; align-items: center; }
+  .topbar nav a { text-decoration: none; opacity: .85; }
+  .topbar nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  .topbar nav .tape { opacity: 1; font-size: .75rem; }
+  @media (max-width: 720px) { .topbar nav a:not(.tape) { display: none; } }
+
+  /* Hero */
+  .hero { background: var(--red); color: var(--paper); padding: 3rem 0 5rem; overflow: hidden; }
+  .hero-meta { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; opacity: .85; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 2rem; align-items: center; margin-top: 3rem; }
+  .hero h1 {
+    font-size: clamp(5rem, 15vw, 12rem);
+    transform: rotate(-3deg);
+    transform-origin: left bottom;
+    margin-top: 1.4rem;
+  }
+  .hero .lede { font-size: clamp(1.25rem, 2.4vw, 1.7rem); line-height: 1.3; max-width: 30ch; margin: 2rem 0 2.2rem; }
+  .btn {
+    display: inline-block;
+    font-family: var(--sans); font-weight: 800; font-size: 1.15rem;
+    padding: .95rem 1.6rem;
+    border: 0; cursor: pointer; text-decoration: none;
+    background: var(--paper); color: var(--ink);
+    box-shadow: var(--shadow);
+    transform: rotate(-1.5deg);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: rotate(-1.5deg) translate(-2px, -2px); box-shadow: 8px 10px 5px rgba(31,27,24,.55); }
+  .btn:active { transform: rotate(-1.5deg) translate(3px, 4px); box-shadow: 1px 2px 2px rgba(31,27,24,.55); }
+  .btn.ink { background: var(--ink); color: var(--paper); }
+  .btn.red { background: var(--red); color: var(--paper); }
+
+  /* Draggable sticky board */
+  .board {
+    position: relative;
+    height: 460px;
+    touch-action: none;
+  }
+  .note {
+    position: absolute;
+    width: 170px;
+    padding: 1.1rem 1.2rem 1.3rem;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    cursor: grab;
+    user-select: none;
+    border-top: 5px solid var(--red-deep);
+    animation: drop .7s cubic-bezier(.2,.9,.3,1.3) both;
+  }
+  .note.m { border-top-color: var(--mustard); }
+  .note.ink { background: var(--ink); color: var(--paper); border-top-color: var(--mustard); }
+  .note.mustard { background: var(--mustard); border-top-color: var(--ink); }
+  .note strong { display: block; font-size: 1.5rem; font-weight: 900; letter-spacing: -.02em; line-height: 1; }
+  .note span { display: block; font-size: .95rem; margin-top: .4rem; opacity: .8; line-height: 1.3; }
+  .note.dragging { cursor: grabbing; box-shadow: 12px 16px 10px rgba(31,27,24,.45); z-index: 20; }
+  .board-hint { position: absolute; bottom: -1.6rem; right: 0; font-family: var(--mono); font-size: .85rem; color: var(--blush); }
+  @keyframes drop {
+    from { opacity: 0; transform: translateY(-60px) rotate(var(--r, 0deg)) scale(1.08); }
+    to   { opacity: 1; transform: translateY(0) rotate(var(--r, 0deg)) scale(1); }
+  }
+
+  @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .board { height: 420px; margin-top: 1rem; }
+    .note { width: 150px; }
+  }
+
+  /* Sections */
+  section.block { padding: 6rem 0; }
+  .ink-bg { background: var(--ink); color: var(--paper); }
+
+  /* Why: split like the causal/effectual slide */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 3rem; }
+  .split > div { padding: 2.2rem; box-shadow: var(--shadow); }
+  .split .left { background: var(--paper); transform: rotate(-.8deg); }
+  .split .right { background: var(--red); color: var(--paper); transform: rotate(.8deg); }
+  .split h3 { font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: .8rem 0 .8rem; }
+  .split p { margin: 0; max-width: 40ch; }
+  .split .left .mono { color: var(--ink-soft); }
+  .split .right .mono { color: var(--blush); }
+  .why-intro { font-size: clamp(1.3rem, 2.4vw, 1.75rem); color: var(--red); max-width: 34ch; margin: 1.8rem 0 0; line-height: 1.25; }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+
+  /* What's there */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-top: 3rem; }
+  .card { background: var(--paper); box-shadow: var(--shadow); padding: 1.8rem; border-top: 4px solid var(--red); }
+  .card:nth-child(3n+2) { border-top-color: var(--mustard); transform: rotate(.7deg); }
+  .card:nth-child(3n+1) { transform: rotate(-.6deg); }
+  .card:nth-child(3n) { transform: rotate(.3deg); }
+  .card h3 { font-size: 1.75rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 .5rem; }
+  .card p { margin: 0; color: var(--ink-soft); }
+  @media (max-width: 880px) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
+
+  /* Steps */
+  .steps { margin-top: 3rem; display: grid; gap: 2.2rem; }
+  .step { display: grid; grid-template-columns: 7rem 1fr; gap: 1.5rem; align-items: center; }
+  .step .num { font-size: clamp(5rem, 10vw, 7.5rem); font-weight: 900; color: var(--red); line-height: .8; letter-spacing: -.05em; }
+  .step h3 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight: 800; letter-spacing: -.02em; margin: 0 0 .3rem; line-height: 1.05; }
+  .step p { margin: 0; color: var(--ink-soft); max-width: 55ch; }
+  .step:nth-child(even) .num { transform: rotate(4deg); }
+  .step:nth-child(odd) .num { transform: rotate(-4deg); }
+
+  /* Break picker */
+  .picker-intro { color: var(--blush); font-size: 1.3rem; margin: 1.6rem 0 2rem; max-width: 40ch; }
+  .options { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .opt {
+    font-family: var(--sans); font-weight: 800; font-size: 1.2rem;
+    padding: .9rem 1.4rem; border: 0; cursor: pointer;
+    background: var(--paper); color: var(--ink);
+    box-shadow: 5px 7px 0 rgba(0,0,0,.5);
+    transition: transform .15s ease;
+  }
+  .opt:nth-child(1) { transform: rotate(-2deg); }
+  .opt:nth-child(2) { transform: rotate(1.5deg); }
+  .opt:nth-child(3) { transform: rotate(-1deg); }
+  .opt[aria-pressed="true"] { background: var(--red); color: var(--paper); }
+  .plan {
+    margin-top: 2.4rem;
+    background: var(--paper); color: var(--ink);
+    box-shadow: 6px 8px 0 var(--red);
+    padding: 2rem 2.2rem;
+    max-width: 640px;
+    transform: rotate(-1deg);
+  }
+  .plan h3 { font-size: 2rem; font-weight: 900; letter-spacing: -.02em; margin: .6rem 0 .6rem; }
+  .plan ul { list-style: none; padding: 0; margin: 0; }
+  .plan li { padding-left: 1.4rem; position: relative; margin: .35rem 0; }
+  .plan li::before { content: "→"; color: var(--red); position: absolute; left: 0; }
+  .plan.pop { animation: pop .35s cubic-bezier(.2,.9,.3,1.4); }
+  @keyframes pop { from { transform: rotate(-4deg) scale(.94); opacity: .3; } to { transform: rotate(-1deg) scale(1); opacity: 1; } }
+
+  /* Who's making it */
+  .makers { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.4rem; margin-top: 3rem; }
+  .makers .big { background: var(--ink); color: var(--paper); padding: 2.4rem; box-shadow: var(--shadow); transform: rotate(-.6deg); }
+  .makers .big p { font-size: clamp(1.3rem, 2.4vw, 1.75rem); line-height: 1.25; margin: 1rem 0 0; }
+  .makers .big .mono { color: var(--mustard); }
+  .makers .side { background: var(--mustard); padding: 2.4rem; box-shadow: var(--shadow); transform: rotate(.8deg); }
+  .makers .side p { font-size: 1.3rem; line-height: 1.3; margin: 1rem 0 1.6rem; }
+  .labels { display: flex; flex-wrap: wrap; gap: .9rem 1rem; margin-top: 2.4rem; }
+  .labels .tape:nth-child(even) { transform: rotate(2deg); }
+  @media (max-width: 760px) { .makers { grid-template-columns: 1fr; } }
+
+  /* RSVP */
+  .rsvp { background: var(--red); color: var(--paper); }
+  .rsvp-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: center; }
+  .rsvp h2 { color: var(--paper); }
+  .details { margin-top: 2rem; display: grid; gap: .9rem; }
+  .details div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; align-items: baseline; }
+  .details .mono { color: var(--blush); }
+  .details strong { font-size: 1.3rem; }
+  .signup { background: var(--paper); color: var(--ink); padding: 2rem; box-shadow: 6px 8px 0 var(--ink); transform: rotate(1.5deg); }
+  .signup h3 { margin: 0 0 .4rem; font-size: 1.8rem; font-weight: 900; color: var(--red); letter-spacing: -.02em; }
+  .signup p { margin: 0 0 1.2rem; color: var(--ink-soft); font-size: 1rem; }
+  .signup label { display: block; font-family: var(--mono); font-size: .9rem; margin-bottom: .4rem; }
+  .signup input {
+    width: 100%; font: inherit; padding: .8rem .9rem;
+    border: 2px solid var(--ink); background: #fff; color: var(--ink); margin-bottom: 1rem;
+  }
+  .signup .btn { width: 100%; transform: none; }
+  .signup .btn:hover { transform: translate(-2px, -2px); }
+  .form-msg { font-family: var(--mono); font-size: .95rem; margin-top: 1rem; min-height: 1.4em; }
+  .form-msg.err { color: var(--red-deep); }
+  @media (max-width: 860px) { .rsvp-grid { grid-template-columns: 1fr; } }
+
+  /* FAQ */
+  .faq { margin-top: 2.6rem; display: grid; gap: 1rem; max-width: 820px; }
+  .faq details { background: var(--paper); box-shadow: var(--shadow); }
+  .faq details:nth-child(odd) { transform: rotate(-.4deg); }
+  .faq details:nth-child(even) { transform: rotate(.4deg); }
+  .faq summary {
+    cursor: pointer; list-style: none;
+    padding: 1.3rem 1.6rem; font-weight: 800; font-size: 1.3rem;
+    display: flex; justify-content: space-between; gap: 1rem;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--red); font-weight: 900; font-size: 1.6rem; line-height: 1; }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { margin: 0; padding: 0 1.6rem 1.4rem; color: var(--ink-soft); max-width: 62ch; }
+
+  footer { background: var(--ink); color: var(--paper); padding: 3rem 0; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; align-items: baseline; }
+  footer .logo { font-size: 2.4rem; }
+  footer .mono { opacity: .7; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="#top">McCup</a>
+    <nav aria-label="Main">
+      <a href="#why">Why</a>
+      <a href="#whats-there">What's there</a>
+      <a href="#faq">FAQ</a>
+      <a class="tape" href="#rsvp">Get on the list</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-meta mono">
+        <span>McGill · Finals season</span>
+        <span>[Date TBA]</span>
+      </div>
+      <div class="hero-grid">
+        <div>
+          <span class="tape">Drop in anytime</span>
+          <h1 class="display">McCup</h1>
+          <p class="lede">Step out of the library. Eat something, hear some music, see your friends. Then go back and finish strong.</p>
+          <a class="btn" href="#rsvp">Get on the list</a>
+        </div>
+
+        <div class="board" id="board" aria-label="What's at McCup. These notes can be dragged around.">
+          <div class="note" style="left:4%;top:4%;--r:-5deg;animation-delay:.15s"><strong>Food</strong><span>Real food, not vending machine.</span></div>
+          <div class="note m" style="left:48%;top:0%;--r:4deg;animation-delay:.3s"><strong>Drinks</strong><span>Coffee, tea and something cold.</span></div>
+          <div class="note ink" style="left:58%;top:38%;--r:-3deg;animation-delay:.45s"><strong>Music</strong><span>Live sets and a good playlist.</span></div>
+          <div class="note mustard" style="left:12%;top:40%;--r:3deg;animation-delay:.6s"><strong>Games</strong><span>Quick rounds, no commitment.</span></div>
+          <div class="note" style="left:34%;top:68%;--r:-2deg;animation-delay:.75s"><strong>Your people</strong><span>Places to sit and actually talk.</span></div>
+          <span class="board-hint" aria-hidden="true">go on, move us around</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why -->
+  <section class="block" id="why">
+    <div class="wrap">
+      <h2 class="display">Finals get lonely.</h2>
+      <p class="why-intro">Campus goes quiet, every day looks the same, and everyone's in their own corner of the library.</p>
+      <div class="split">
+        <div class="left">
+          <span class="mono">What you're offered</span>
+          <h3>Another full night out you don't have time for.</h3>
+          <p>Tickets, a dress code, a late finish and a slow morning. Most people skip it, and fair enough.</p>
+        </div>
+        <div class="right">
+          <span class="mono">What McCup is</span>
+          <h3>An easy reason to take a real break.</h3>
+          <p>No plans needed. Walk over between study blocks, stay as long as you like, and head back feeling human again.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What's there -->
+  <section class="block" id="whats-there" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="display">What's there</h2>
+      <div class="cards">
+        <article class="card"><h3>Food</h3><p>Proper meals and snacks from local vendors. [Vendors to be announced]</p></article>
+        <article class="card"><h3>Drinks</h3><p>Coffee to keep you going, and cold drinks for when you need a reset.</p></article>
+        <article class="card"><h3>Music</h3><p>Student performers and DJs keeping the room alive all day.</p></article>
+        <article class="card"><h3>Games</h3><p>Tables for quick games you can join or leave whenever you want.</p></article>
+        <article class="card"><h3>Activities</h3><p>Hands-on things to do that have nothing to do with your syllabus.</p></article>
+        <article class="card"><h3>Places to hang out</h3><p>Lounge corners for catching up with friends you haven't seen since midterms.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="display">How it works</h2>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div><h3>Close the laptop</h3><p>No ticket to print, no plan to make. Just get up and walk over.</p></div></div>
+        <div class="step"><div class="num">2</div><div><h3>Grab something to eat</h3><p>Pick up food and a drink, then find your friends or make new ones.</p></div></div>
+        <div class="step"><div class="num">3</div><div><h3>Stay as long as you want</h3><p>Fifteen minutes or the whole afternoon. Nobody's keeping track.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h3>Go back recharged</h3><p>Return to your notes with a clearer head than you left with.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Break picker -->
+  <section class="block ink-bg">
+    <div class="wrap">
+      <h2 class="display">How long have you got?</h2>
+      <p class="picker-intro">Pick one and we'll plan your break.</p>
+      <div class="options" role="group" aria-label="Choose how long your break is">
+        <button class="opt" data-plan="short" aria-pressed="true">15 minutes</button>
+        <button class="opt" data-plan="hour" aria-pressed="false">An hour</button>
+        <button class="opt" data-plan="long" aria-pressed="false">The whole afternoon</button>
+      </div>
+      <div class="plan" id="plan" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- Makers -->
+  <section class="block">
+    <div class="wrap">
+      <h2 class="display">Made by students</h2>
+      <div class="makers">
+        <div class="big">
+          <span class="mono">Who's behind it</span>
+          <p>McCup is built by a team of McGill students, each running the part of the event they care about most, from the food to the music to the games.</p>
+        </div>
+        <div class="side">
+          <span class="mono">Want in?</span>
+          <p>Student groups, performers, local businesses and brands: there's room for you here.</p>
+          <a class="btn ink" href="mailto:[contact@email]">Get in touch</a>
+        </div>
+      </div>
+      <div class="labels" aria-label="Partners">
+        <span class="tape">[Student group]</span>
+        <span class="tape mustard">[Local café]</span>
+        <span class="tape red">[Performer]</span>
+        <span class="tape">[Brand partner]</span>
+        <span class="tape mustard">[Vendor]</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RSVP -->
+  <section class="block rsvp" id="rsvp">
+    <div class="wrap rsvp-grid">
+      <div>
+        <h2 class="display">Save the date</h2>
+        <div class="details">
+          <div><span class="mono">When</span><strong>[Date and time TBA]</strong></div>
+          <div><span class="mono">Where</span><strong>[Location on campus TBA]</strong></div>
+          <div><span class="mono">Cost</span><strong>[TBA]</strong></div>
+        </div>
+      </div>
+      <form class="signup" id="signup" novalidate>
+        <h3>Get on the list</h3>
+        <p>We'll email you when the date and lineup are announced.</p>
+        <label for="email">McGill email</label>
+        <input id="email" name="email" type="email" placeholder="firstname.lastname@mail.mcgill.ca" autocomplete="email" required>
+        <button class="btn red" type="submit">Add me to the list</button>
+        <div class="form-msg" id="form-msg" role="status"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block" id="faq">
+    <div class="wrap">
+      <h2 class="display">Questions?</h2>
+      <div class="faq">
+        <details><summary>Do I need to sign up to come?</summary><p>No. McCup is drop-in. Getting on the list just means you'll hear about the date and lineup first.</p></details>
+        <details><summary>How long should I stay?</summary><p>As long as works for you. Some people will come for a coffee and a game, others will stay all afternoon.</p></details>
+        <details><summary>Can I bring friends from outside McGill?</summary><p>[Guest policy to be confirmed.]</p></details>
+        <details><summary>I want to perform or run a table. Who do I talk to?</summary><p>Send us a note at [contact@email] with what you have in mind.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="logo">McCup</span>
+    <span class="mono">McGill University · [Instagram handle]</span>
+  </div>
+</footer>
+
+<script>
+  // Draggable notes
+  (function () {
+    const board = document.getElementById('board');
+    let z = 10;
+    board.querySelectorAll('.note').forEach(note => {
+      let startX, startY, origX, origY;
+      note.tabIndex = 0;
+      note.addEventListener('pointerdown', e => {
+        note.setPointerCapture(e.pointerId);
+        note.classList.add('dragging');
+        note.style.zIndex = ++z;
+        startX = e.clientX; startY = e.clientY;
+        origX = note.offsetLeft; origY = note.offsetTop;
+      });
+      note.addEventListener('pointermove', e => {
+        if (!note.classList.contains('dragging')) return;
+        const maxX = board.clientWidth - note.offsetWidth;
+        const maxY = board.clientHeight - note.offsetHeight;
+        const x = Math.min(Math.max(origX + e.clientX - startX, 0), maxX);
+        const y = Math.min(Math.max(origY + e.clientY - startY, 0), maxY);
+        note.style.left = x + 'px';
+        note.style.top = y + 'px';
+      });
+      const end = () => note.classList.remove('dragging');
+      note.addEventListener('pointerup', end);
+      note.addEventListener('pointercancel', end);
+    });
+  })();
+
+  // Break picker
+  (function () {
+    const plans = {
+      short: { tag: '15 min', title: 'The quick reset', items: [
+        'Grab a snack and a drink on the way in.',
+        'Play one round of whatever game has a free seat.',
+        'Back at your desk before your coffee goes cold.'
+      ]},
+      hour: { tag: '1 hour', title: 'The proper break', items: [
+        'Sit down and eat a real meal.',
+        'Catch a set from one of the student performers.',
+        'Challenge a friend at the games tables, then head back reset.'
+      ]},
+      long: { tag: 'All afternoon', title: 'The study group outing', items: [
+        'Bring the whole group along.',
+        'Rotate between the food, the music and the activities.',
+        'Finish in the lounge and plan tomorrow\'s study session together.'
+      ]}
+    };
+    const plan = document.getElementById('plan');
+    const buttons = document.querySelectorAll('.opt');
+    function render(key) {
+      const p = plans[key];
+      plan.innerHTML = '<span class="tape mustard">' + p.tag + '</span><h3>' + p.title + '</h3><ul>' +
+        p.items.map(i => '<li>' + i + '</li>').join('') + '</ul>';
+      plan.classList.remove('pop'); void plan.offsetWidth; plan.classList.add('pop');
+    }
+    buttons.forEach(b => b.addEventListener('click', () => {
+      buttons.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+      render(b.dataset.plan);
+    }));
+    render('short');
+  })();
+
+  // Signup (placeholder: connect to your real form service)
+  (function () {
+    const form = document.getElementById('signup');
+    const input = document.getElementById('email');
+    const msg = document.getElementById('form-msg');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!input.value || !input.checkValidity()) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Enter a valid email address, like name@mail.mcgill.ca.';
+        input.focus();
+        return;
+      }
+      msg.className = 'form-msg';
+      msg.textContent = 'Added. See you at McCup.';
+      form.querySelector('button').textContent = 'Added to the list';
+      input.value = '';
+    });
+  })();
+</script>
+</body>
+</html>
