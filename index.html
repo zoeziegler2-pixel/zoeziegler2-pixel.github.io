@@ -290,7 +290,7 @@
       <a href="#why">Why</a>
       <a href="#whats-there">What's there</a>
       <a href="#faq">FAQ</a>
-      <a class="tape" href="#rsvp">Get on the list</a>
+      <a class="tape" href="#rsvp">Stay up to date</a>
     </nav>
   </div>
 </header>
@@ -301,14 +301,14 @@
     <div class="wrap">
       <div class="hero-meta mono">
         <span>McGill · Finals season</span>
-        <span>[Date TBA]</span>
+        <span>[Date TBA] · 11am–5pm</span>
       </div>
       <div class="hero-grid">
         <div>
           <span class="tape">Drop in anytime</span>
           <h1 class="display">McCup</h1>
           <p class="lede">Step out of the library. Eat something, hear some music, see your friends. Then go back and finish strong.</p>
-          <a class="btn" href="#rsvp">Get on the list</a>
+          <a class="btn" href="#rsvp">Stay up to date</a>
         </div>
 
         <div class="board" id="board" aria-label="What's at McCup. These notes can be dragged around.">
@@ -331,13 +331,13 @@
       <div class="split">
         <div class="left">
           <span class="mono">What you're offered</span>
-          <h3>Another full night out you don't have time for.</h3>
-          <p>Tickets, a dress code, a late finish and a slow morning. Most people skip it, and fair enough.</p>
+          <h3>Another big event that eats your whole day.</h3>
+          <p>Tickets, a dress code and hours you can't spare. Most people skip it, and fair enough.</p>
         </div>
         <div class="right">
           <span class="mono">What McCup is</span>
           <h3>An easy reason to take a real break.</h3>
-          <p>No plans needed. Walk over between study blocks, stay as long as you like, and head back feeling human again.</p>
+          <p>Open from 11am to 5pm. Walk over between study blocks, stay as long as you like, and head back feeling human again.</p>
         </div>
       </div>
     </div>
@@ -388,11 +388,11 @@
   <!-- Makers -->
   <section class="block">
     <div class="wrap">
-      <h2 class="display">Made by students</h2>
+      <h2 class="display">Made by BUSA 303 students</h2>
       <div class="makers">
         <div class="big">
           <span class="mono">Who's behind it</span>
-          <p>McCup is built by a team of McGill students, each running the part of the event they care about most, from the food to the music to the games.</p>
+          <p>McCup is built by the BUSA 303 class at McGill, with each student running the part of the event they care about most, from the food to the music to the games.</p>
         </div>
         <div class="side">
           <span class="mono">Want in?</span>
@@ -401,11 +401,11 @@
         </div>
       </div>
       <div class="labels" aria-label="Partners">
-        <span class="tape">[Student group]</span>
-        <span class="tape mustard">[Local café]</span>
-        <span class="tape red">[Performer]</span>
-        <span class="tape">[Brand partner]</span>
-        <span class="tape mustard">[Vendor]</span>
+        <span class="tape">McGill / Montréal coffee shops</span>
+        <span class="tape red">BUSA 303 group</span>
+        <span class="tape">Local performers</span>
+        <span class="tape mustard">Montréal businesses</span>
+        <span class="tape red">Partners to be announced</span>
       </div>
     </div>
   </section>
@@ -416,17 +416,17 @@
       <div>
         <h2 class="display">Save the date</h2>
         <div class="details">
-          <div><span class="mono">When</span><strong>[Date and time TBA]</strong></div>
+          <div><span class="mono">When</span><strong>[Date TBA], 11am to 5pm</strong></div>
           <div><span class="mono">Where</span><strong>[Location on campus TBA]</strong></div>
           <div><span class="mono">Cost</span><strong>[TBA]</strong></div>
         </div>
       </div>
       <form class="signup" id="signup" novalidate>
-        <h3>Get on the list</h3>
+        <h3>Stay up to date</h3>
         <p>We'll email you when the date and lineup are announced.</p>
         <label for="email">McGill email</label>
         <input id="email" name="email" type="email" placeholder="firstname.lastname@mail.mcgill.ca" autocomplete="email" required>
-        <button class="btn red" type="submit">Add me to the list</button>
+        <button class="btn red" type="submit">Keep me posted</button>
         <div class="form-msg" id="form-msg" role="status"></div>
       </form>
     </div>
@@ -437,9 +437,9 @@
     <div class="wrap">
       <h2 class="display">Questions?</h2>
       <div class="faq">
-        <details><summary>Do I need to sign up to come?</summary><p>No. McCup is drop-in. Getting on the list just means you'll hear about the date and lineup first.</p></details>
-        <details><summary>How long should I stay?</summary><p>As long as works for you. Some people will come for a coffee and a game, others will stay all afternoon.</p></details>
-        <details><summary>Can I bring friends from outside McGill?</summary><p>[Guest policy to be confirmed.]</p></details>
+        <details><summary>Do I need to sign up to come?</summary><p>No. McCup is drop-in. Signing up for updates just means you'll hear about the date and lineup first.</p></details>
+        <details><summary>How long should I stay?</summary><p>As long as works for you. We're open from 11am to 5pm, so come for a coffee and a game or stay the whole afternoon.</p></details>
+        <details><summary>Can I bring friends from outside McGill?</summary><p>Yes, absolutely. McCup is open to everyone, so bring your friends, roommates and whoever else needs a break.</p></details>
         <details><summary>I want to perform or run a table. Who do I talk to?</summary><p>Send us a note at [contact@email] with what you have in mind.</p></details>
       </div>
     </div>
@@ -531,8 +531,8 @@
         return;
       }
       msg.className = 'form-msg';
-      msg.textContent = 'Added. See you at McCup.';
-      form.querySelector('button').textContent = 'Added to the list';
+      msg.textContent = 'You\'re in. We\'ll email you when the date and lineup are out.';
+      form.querySelector('button').textContent = 'You\'re in';
       input.value = '';
     });
   })();
